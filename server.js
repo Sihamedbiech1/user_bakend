@@ -1,9 +1,23 @@
 const express = require('express'); // Importer Express
 const app = express(); // Initialiser l'application Express
 
-// Définir une route GET sur "/"
+// Middleware pour parser le JSON dans les requêtes
+app.use(express.json());
+
+// Route GET sur "/"
 app.get('/', (req, res) => {
     res.send('Serveur Express fonctionne !'); // Réponse envoyée au navigateur
+});
+
+// Route POST sur "/users"
+app.post('/users', (req, res) => {
+    const { name, email } = req.body; // Récupérer les données envoyées
+
+    if (!name || !email) {
+        return res.status(400).json({ message: "Nom et email sont requis" });
+    }
+
+    res.status(201).json({ message: "Utilisateur créé avec succès", user: { name, email } });
 });
 
 // Définir le port du serveur
