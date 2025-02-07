@@ -1,13 +1,17 @@
 const express = require('express');
-const db = require('./database'); // Importer la base de données
+const db = require('./database');
+const path = require('path'); // Importer le module path pour gérer les chemins de fichiers
 const app = express();
 
 // Middleware pour parser le JSON
 app.use(express.json());
 
-// Route GET - Vérifier si le serveur fonctionne
+// Middleware pour servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public'))); // Utilise le dossier 'public' pour servir les fichiers statiques
+
+// Route GET - Afficher la page HTML
 app.get('/', (req, res) => {
-    res.send('Serveur Express fonctionne avec SQLite !');
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Renvoie le fichier HTML
 });
 
 // Route POST - Ajouter un utilisateur
@@ -27,11 +31,6 @@ app.post('/users', (req, res) => {
     });
 });
 
-// Définir le port du serveur
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
-});
 // Route GET - Récupérer tous les utilisateurs
 app.get('/users', (req, res) => {
     db.all("SELECT * FROM users", [], (err, rows) => {
@@ -40,4 +39,10 @@ app.get('/users', (req, res) => {
         }
         res.json(rows);
     });
+});
+
+// Définir le port du serveur
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`Serveur démarré sur le port ${PORT}`);
 });
